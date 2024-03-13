@@ -1,0 +1,36 @@
+Working:
+
+PS C:\temp> .\DomainTcpChecksV3.ps1 -DomainName onpremmcrepro.com                                                                                                                                                                                                                                                             +=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=                                                                                                                                                                                                                      Local Domain = MCREPRO.COM                                                                                                                                     Local Domain Controllers                                                                                                                                          k115qn6kwh0h0t6.mcrepro.com ug-vgbqje0wf1h5.mcrepro.com                                                                                                     
+Target Domain = onpremmcrepro.com
+Target Domain Controllers:
+   onpremdc2022.onpremmcrepro.com
+
+
+HostName    : MgmtSrv2022.mcRepro.com
+AddressList : {10.1.0.5}
+
+
+
++=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+Target Domain Controllers:
+
+
+ComputerName           : onpremdc2022.onpremmcrepro.com
+RemoteAddress          : 10.2.0.4
+InterfaceAlias         : Ethernet
+SourceAddress          : 10.1.0.5
+PingSucceeded          : True
+PingReplyDetails (RTT) : 1 ms
+
+
+
+  Tcp port 135 is Open
+  Tcp port 389 is Open
+  Tcp port 636 is Open
+  Tcp port 3268 is Open
+  Tcp port 3269 is Open
+  Tcp port 53 is Open
+  Tcp port 88 is Open
+  Tcp port 445 is Open
+    One of these RPC ports is Open:
+      [49664 49665 49666 49667 49668 49669 59322 59351 59364 59377 59564]
