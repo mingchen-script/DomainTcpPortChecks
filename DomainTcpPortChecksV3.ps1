@@ -111,7 +111,7 @@
                     return ports_and_uuids;
                 }
             }
-    '@
+'@
         }
         PROCESS
         {
