@@ -1,23 +1,26 @@
-    # Domain TCP ports checks v3.1:
+    # Domain TCP ports checks v3.2:
     #   Perform quick TCP port tests for TrustCreate operation. Modify as needed to suit your needs.
     #       Ming Chen [MSFT] 3/13/2024 & Ryan Ries [MSFT]  10/26/2023
     #    Ref1: https://learn.microsoft.com/en-us/troubleshoot/windows-server/identity/config-firewall-for-ad-domains-and-trusts
     #    Ref2: Ryan's RPC port script https://devblogs.microsoft.com/scripting/testing-rpc-ports-with-powershell-and-yes-its-as-much-fun-as-it-sounds
     #               https://ryanries.github.io/?title=test_rpc_1.1.html 
+    # 12/4/2024.. Added SMB encryption check for local domain controller. 
     #
     # Usage 1: 
-    #       .\DomainTcpChecksV3.ps1 -DomainName <Domain Name> 
-    #           Replace <Domain Name> with name of targetDomain. 
+    #       .\CheckDomainTcpPorts.ps1 -DomainName <Domain Name> 
+    #           Replace <Domain Name> with name of targetDomain. If none is enter, it will test current domain (for AD replication troubleshoot.)
     #           For example:
-    #               .\DomainTcpChecksV3.ps1 -DomainName OnPremMcRepro.com
+    #               .\CheckDomainTcpPorts.ps1 -DomainName OnPremMcRepro.com
     # Usage 2:
     #   Modify $DomainName in this script to target a specific domain. This will enable double-click on script for quick test. 
     #
     Param(
     [string]$DomainName
     )
-    # $DomainName = "McRepro.com" # <<<-------- Use this to automate tests without input, good for double clicks and portal's RunPowerShellScript.
     $gShowRPCTests = $false #Set this to true to test and display all RPC ports test results instead of stopping at the first reachable RPC port
+
+    # $DomainName = "McRepro.com" # <<<-------- Use this to automate tests without input, good for double clicks and portal's RunPowerShellScript.
+    if ([string]::IsNullOrEmpty($DomainName)) { [string]$DomainName = $env:userdnsdomain  }
     #
     #============================================================================================================
     #   Function from Ryan's RPC port script https://devblogs.microsoft.com/scripting/testing-rpc-ports-with-powershell-and-yes-its-as-much-fun-as-it-sounds
@@ -213,3 +216,10 @@
     } else {
         Write-Output "`n>>>>Error<<<< `n      The command [nltest /dnsgetdc:$domainName] does not find any domain controllers for [$DomainName]. `n      To fix this, please configure Conditional Forwarders for [$DomainName] on the DNS server and run the command again..`n"
     }
+
+# Check SMB encryption status on all domain controllers
+$results = Get-ADDomainController -Filter * | ForEach-Object {
+    $smbConfig = Invoke-Command -ComputerName $_.HostName -ScriptBlock { Get-SmbServerConfiguration } -ErrorAction SilentlyContinue
+    if ($smbConfig) { [PSCustomObject]@{ 'DomainController' = $_.HostName; 'SMBEncryptionEnabled' = $smbConfig.EncryptData } }
+    }
+$results
